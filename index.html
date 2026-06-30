@@ -212,6 +212,7 @@ function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 const GOALS=[
   {id:'piano',    emoji:'🎹', name:'Piano numérique (1ère mensualité)', target:51.25,  note:'Payable en 4× · ~51,25€/mois', monthly:true},
   {id:'style',    emoji:'👕', name:'Vêtements, parfum, style',          target:200,    note:'Renouveler la garde-robe d\'un coup'},
+  {id:'locvoit',  emoji:'🚙', name:'Location voiture (plusieurs jours)', target:600,    note:'Louer une voiture sur quelques jours'},
   {id:'budapest', emoji:'✈️', name:'Voyage à Budapest',                 target:1000,   note:'Vol + séjour'},
   {id:'logement', emoji:'🏠', name:'Logement (emménagement)',           target:1800,   note:'Lille/Roubaix · loyer ~550€ + dépôt + avance + installation'},
   {id:'voiture',  emoji:'🚗', name:'Voiture (Leboncoin)',               target:2000,   note:'Occasion'},
@@ -221,53 +222,78 @@ const GOALS=[
 /* ═══ INIT — trades réels (avec Position ID pour dédup) ═══ */
 function getDefaultState(){
   const trades=[
-    {id:'p:XAUUSD.I:75305467',result:'loss',pnl:-5.86,pair:'XAUUSD',note:'',date:1781538340000,hUTC:15},
-    {id:'p:NAS100:75305304',result:'win',pnl:10.16,pair:'NAS100',note:'',date:1781539709000,hUTC:16},
-    {id:'p:JP225:75375402',result:'loss',pnl:-2.93,pair:'JP225',note:'',date:1781574013000,hUTC:1},
-    {id:'p:JP225:75375000',result:'win',pnl:0.54,pair:'JP225',note:'',date:1781574591000,hUTC:1},
-    {id:'p:JP225:75374986',result:'win',pnl:0.14,pair:'JP225',note:'',date:1781574595000,hUTC:1},
-    {id:'p:JP225:75374968',result:'win',pnl:0.29,pair:'JP225',note:'',date:1781574602000,hUTC:1},
-    {id:'p:JP225:75376302',result:'win',pnl:2.91,pair:'JP225',note:'',date:1781574817000,hUTC:1},
-    {id:'p:JP225:75376705',result:'win',pnl:1.29,pair:'JP225',note:'',date:1781575228000,hUTC:2},
-    {id:'p:JP225:75376741',result:'win',pnl:1.94,pair:'JP225',note:'',date:1781575285000,hUTC:2},
-    {id:'p:XAUUSD.I:75377309',result:'loss',pnl:-2.81,pair:'XAUUSD',note:'',date:1781575451000,hUTC:2},
-    {id:'p:JP225:75377461',result:'loss',pnl:-2.59,pair:'JP225',note:'',date:1781575569000,hUTC:2},
-    {id:'p:JP225:75377542',result:'loss',pnl:-2.86,pair:'JP225',note:'',date:1781575662000,hUTC:2},
-    {id:'p:GER40:75410239',result:'win',pnl:31.22,pair:'GER40',note:'',date:1781603924000,hUTC:9},
-    {id:'p:XAUUSD.I:75445069',result:'loss',pnl:-3.33,pair:'XAUUSD',note:'',date:1781622716000,hUTC:15},
-    {id:'p:DJ30:75451147',result:'loss',pnl:-2.64,pair:'DJ30',note:'',date:1781625959000,hUTC:16},
-    {id:'p:BTCUSD:75451404',result:'win',pnl:11.64,pair:'BTCUSD',note:'',date:1781625988000,hUTC:16},
-    {id:'p:USWTI:75451411',result:'win',pnl:10.18,pair:'USWTI',note:'',date:1781627827000,hUTC:16},
-    {id:'p:USWTI:75479946',result:'loss',pnl:-4.31,pair:'USWTI',note:'un trade pris a cause de l\'adrealine',date:1781642648000,hUTC:20},
-    {id:'p:USWTI:75480513',result:'loss',pnl:-2.11,pair:'USWTI',note:'pour ratraper le trade precedant',date:1781643262000,hUTC:20},
-    {id:'p:JP225:75519054',result:'loss',pnl:-12.13,pair:'JP225',note:'',date:1781664183000,hUTC:2},
-    {id:'p:JP225:75519298',result:'win',pnl:8.67,pair:'JP225',note:'',date:1781673481000,hUTC:5},
-    {id:'p:JP225:75518789',result:'win',pnl:7.93,pair:'JP225',note:'',date:1781673485000,hUTC:5},
-    {id:'p:GER40:75527910',result:'win',pnl:25.22,pair:'GER40',note:'',date:1781689273000,hUTC:9},
-    {id:'p:XAUUSD.I:75543864',result:'win',pnl:1.38,pair:'XAUUSD',note:'',date:1781690910000,hUTC:10},
-    {id:'p:XAUUSD.I:75545333',result:'loss',pnl:-5.22,pair:'XAUUSD',note:'',date:1781691894000,hUTC:10},
-    {id:'p:NAS100:75573944',result:'loss',pnl:-5.72,pair:'NAS100',note:'',date:1781711376000,hUTC:15},
-    {id:'p:XAUUSD.I:75573542',result:'loss',pnl:-4.14,pair:'XAUUSD',note:'',date:1781711424000,hUTC:15},
-    {id:'p:USWTI:75573566',result:'loss',pnl:-6.92,pair:'USWTI',note:'',date:1781711517000,hUTC:15},
-    {id:'p:DJ30:75573216',result:'win',pnl:10.05,pair:'DJ30',note:'',date:1781713010000,hUTC:16},
-    {id:'p:XAUUSD.I:75609081',result:'loss',pnl:-5.47,pair:'XAUUSD',note:'',date:1781727973000,hUTC:20},
-    {id:'p:BTCUSD:75608673',result:'loss',pnl:-0.26,pair:'BTCUSD',note:'',date:1781728109000,hUTC:20},
-    {id:'p:XAUUSD.I:75609895',result:'win',pnl:0.13,pair:'XAUUSD',note:'',date:1781728278000,hUTC:20},
-    {id:'p:XAUUSD.I:75610068',result:'win',pnl:4.1,pair:'XAUUSD',note:'',date:1781728332000,hUTC:20},
-    {id:'p:XAUUSD.I:75611614',result:'loss',pnl:-3.98,pair:'XAUUSD',note:'',date:1781728630000,hUTC:20},
-    {id:'p:XAUUSD.I:75611784',result:'loss',pnl:-7.38,pair:'XAUUSD',note:'',date:1781728731000,hUTC:20},
-    {id:'p:XAUUSD.I:75629775',result:'loss',pnl:-4.2,pair:'XAUUSD',note:'',date:1781735688000,hUTC:22},
-    {id:'p:JP225:75662256',result:'loss',pnl:-0.05,pair:'JP225',note:'',date:1781745878000,hUTC:1},
-    {id:'p:JP225:75662266',result:'loss',pnl:-0.1,pair:'JP225',note:'',date:1781745880000,hUTC:1},
-    {id:'p:JP225:75662793',result:'loss',pnl:-0.48,pair:'JP225',note:'',date:1781746131000,hUTC:1},
     {id:'p:JP225:75664882',result:'win',pnl:40.4,pair:'JP225',note:'',date:1781767528000,hUTC:7},
     {id:'p:GER40:75698772',result:'loss',pnl:-11.17,pair:'GER40',note:'',date:1781774221000,hUTC:9},
     {id:'p:XAUUSD.I:75704319',result:'loss',pnl:-0.12,pair:'XAUUSD',note:'',date:1781777978000,hUTC:10},
     {id:'p:XAUUSD.I:75704409',result:'loss',pnl:-0.58,pair:'XAUUSD',note:'',date:1781778038000,hUTC:10},
     {id:'p:XAUUSD.I:75704829',result:'win',pnl:7.89,pair:'XAUUSD',note:'',date:1781779596000,hUTC:10},
     {id:'p:XAUUSD.I:75707469',result:'win',pnl:28.58,pair:'XAUUSD',note:'',date:1781780461000,hUTC:11},
+    {id:'p:JP225:75835737',result:'loss',pnl:-0.35,pair:'JP225',note:'',date:1781833938000,hUTC:1},
+    {id:'p:XAUUSD.I:75790015',result:'win',pnl:65.65,pair:'XAUUSD',note:'',date:1781850526000,hUTC:6},
+    {id:'p:XAUUSD.I:75861958',result:'loss',pnl:-0.51,pair:'XAUUSD',note:'',date:1781851410000,hUTC:6},
+    {id:'p:XAUUSD.I:75861982',result:'loss',pnl:-0.14,pair:'XAUUSD',note:'',date:1781851446000,hUTC:6},
+    {id:'p:XAUUSD.I:75862124',result:'loss',pnl:-0.36,pair:'XAUUSD',note:'',date:1781853178000,hUTC:7},
+    {id:'p:XAUUSD.I:75861802',result:'win',pnl:6.08,pair:'XAUUSD',note:'',date:1781854043000,hUTC:7},
+    {id:'p:XAUUSD.I:75867456',result:'loss',pnl:-1.68,pair:'XAUUSD',note:'',date:1781854450000,hUTC:7},
+    {id:'p:XAUUSD.I:75867270',result:'loss',pnl:-0.23,pair:'XAUUSD',note:'',date:1781854452000,hUTC:7},
+    {id:'p:XAUUSD.I:75869073',result:'loss',pnl:-1.24,pair:'XAUUSD',note:'',date:1781855583000,hUTC:7},
+    {id:'p:XAUUSD.I:75868888',result:'win',pnl:4.45,pair:'XAUUSD',note:'',date:1781855644000,hUTC:7},
+    {id:'p:XAUUSD.I:75869629',result:'loss',pnl:-15.19,pair:'XAUUSD',note:'',date:1781855736000,hUTC:7},
+    {id:'p:XAUUSD.I:75869691',result:'loss',pnl:-18.47,pair:'XAUUSD',note:'',date:1781855737000,hUTC:7},
+    {id:'p:XAUUSD.I:75869909',result:'win',pnl:40.76,pair:'XAUUSD',note:'',date:1781855886000,hUTC:7},
+    {id:'p:XAUUSD.I:75870265',result:'win',pnl:0.17,pair:'XAUUSD',note:'',date:1781855956000,hUTC:7},
+    {id:'p:XAUUSD.I:75870353',result:'win',pnl:0.17,pair:'XAUUSD',note:'',date:1781856000000,hUTC:8},
+    {id:'p:XAUUSD.I:75870669',result:'loss',pnl:-11.29,pair:'XAUUSD',note:'',date:1781856247000,hUTC:8},
+    {id:'p:XAUUSD.I:75870859',result:'loss',pnl:-0.89,pair:'XAUUSD',note:'',date:1781856457000,hUTC:8},
+    {id:'p:XAUUSD.I:75871335',result:'loss',pnl:-76.32,pair:'XAUUSD',note:'',date:1781856593000,hUTC:8},
+    {id:'p:XAUUSD.I:75871481',result:'loss',pnl:-7.01,pair:'XAUUSD',note:'',date:1781856625000,hUTC:8},
+    {id:'p:XAUUSD.I:75871685',result:'win',pnl:0.64,pair:'XAUUSD',note:'',date:1781856678000,hUTC:8},
+    {id:'p:XAUUSD.I:75872403',result:'loss',pnl:-49.65,pair:'XAUUSD',note:'',date:1781856942000,hUTC:8},
+    {id:'p:XAUUSD.I:75873196',result:'loss',pnl:-0.23,pair:'XAUUSD',note:'',date:1781857492000,hUTC:8},
+    {id:'p:XAUUSD.I:75873834',result:'win',pnl:28.16,pair:'XAUUSD',note:'',date:1781858044000,hUTC:8},
+    {id:'p:XAUUSD.I:75874730',result:'win',pnl:1.92,pair:'XAUUSD',note:'',date:1781858233000,hUTC:8},
+    {id:'p:XAUUSD.I:75877135',result:'loss',pnl:-2.37,pair:'XAUUSD',note:'',date:1781859477000,hUTC:8},
+    {id:'p:XAUUSD.I:75877589',result:'win',pnl:2.44,pair:'XAUUSD',note:'',date:1781859673000,hUTC:9},
+    {id:'p:XAUUSD.I:75878034',result:'loss',pnl:-12.6,pair:'XAUUSD',note:'',date:1781859727000,hUTC:9},
+    {id:'p:XAUUSD.I:75878426',result:'loss',pnl:-0.27,pair:'XAUUSD',note:'',date:1781859841000,hUTC:9},
+    {id:'p:XAUUSD.I:75879510',result:'loss',pnl:-4.46,pair:'XAUUSD',note:'',date:1781860125000,hUTC:9},
+    {id:'p:XAUUSD.I:75879773',result:'win',pnl:0.46,pair:'XAUUSD',note:'',date:1781860260000,hUTC:9},
+    {id:'p:XAUUSD.I:75880228',result:'loss',pnl:-1.15,pair:'XAUUSD',note:'',date:1781860401000,hUTC:9},
+    {id:'p:GER40:75880542',result:'loss',pnl:-14.12,pair:'GER40',note:'',date:1781860638000,hUTC:9},
+    {id:'p:XAUUSD.I:75884369',result:'loss',pnl:-11.01,pair:'XAUUSD',note:'',date:1781863435000,hUTC:10},
+    {id:'p:XAUUSD.I:75890679',result:'loss',pnl:-0.94,pair:'XAUUSD',note:'',date:1781866089000,hUTC:10},
+    {id:'p:XAUUSD.I:75891642',result:'loss',pnl:-0.49,pair:'XAUUSD',note:'',date:1781866514000,hUTC:10},
+    {id:'p:XAUUSD.I:75892050',result:'loss',pnl:-0.49,pair:'XAUUSD',note:'',date:1781866783000,hUTC:10},
+    {id:'p:XAUUSD.I:75892779',result:'loss',pnl:-4.72,pair:'XAUUSD',note:'',date:1781867027000,hUTC:11},
+    {id:'p:XAUUSD.I:75892862',result:'loss',pnl:-0.49,pair:'XAUUSD',note:'',date:1781867061000,hUTC:11},
+    {id:'p:XAUUSD.I:75892942',result:'loss',pnl:-2.32,pair:'XAUUSD',note:'',date:1781867109000,hUTC:11},
+    {id:'p:XAUUSD.I:75893023',result:'loss',pnl:-0.36,pair:'XAUUSD',note:'',date:1781867164000,hUTC:11},
+    {id:'p:XAUUSD.I:75893370',result:'loss',pnl:-0.88,pair:'XAUUSD',note:'',date:1781867220000,hUTC:11},
+    {id:'p:XAUUSD.I:75893508',result:'loss',pnl:-0.23,pair:'XAUUSD',note:'',date:1781867244000,hUTC:11},
+    {id:'p:XAUUSD.I:75893586',result:'loss',pnl:-2.5,pair:'XAUUSD',note:'',date:1781867422000,hUTC:11},
+    {id:'p:XAUUSD.I:75894120',result:'loss',pnl:-0.12,pair:'XAUUSD',note:'',date:1781867694000,hUTC:11},
+    {id:'p:XAUUSD.I:75893916',result:'loss',pnl:-0.55,pair:'XAUUSD',note:'',date:1781867719000,hUTC:11},
+    {id:'p:XAUUSD.I:75893793',result:'loss',pnl:-0.91,pair:'XAUUSD',note:'',date:1781867721000,hUTC:11},
+    {id:'p:XAUUSD.I:75893763',result:'loss',pnl:-1.15,pair:'XAUUSD',note:'',date:1781867727000,hUTC:11},
+    {id:'p:XAUUSD.I:75895761',result:'win',pnl:0.64,pair:'XAUUSD',note:'',date:1781868614000,hUTC:11},
+    {id:'p:XAUUSD.I:75895808',result:'loss',pnl:-0.09,pair:'XAUUSD',note:'',date:1781868638000,hUTC:11},
+    {id:'p:XAUUSD.I:75895842',result:'win',pnl:1.45,pair:'XAUUSD',note:'',date:1781868695000,hUTC:11},
+    {id:'p:XAUUSD.I:75895988',result:'win',pnl:2.87,pair:'XAUUSD',note:'',date:1781868775000,hUTC:11},
+    {id:'p:XAUUSD.I:75896125',result:'loss',pnl:-0.36,pair:'XAUUSD',note:'',date:1781868841000,hUTC:11},
+    {id:'p:XAUUSD.I:75896244',result:'loss',pnl:-0.31,pair:'XAUUSD',note:'',date:1781868955000,hUTC:11},
+    {id:'p:XAUUSD.I:75896358',result:'loss',pnl:-1.32,pair:'XAUUSD',note:'',date:1781869002000,hUTC:11},
+    {id:'p:XAUUSD.I:75896455',result:'loss',pnl:-4.02,pair:'XAUUSD',note:'',date:1781869189000,hUTC:11},
+    {id:'p:XAUUSD.I:75896609',result:'loss',pnl:-0.93,pair:'XAUUSD',note:'',date:1781869297000,hUTC:11},
+    {id:'p:XAUUSD.I:75896724',result:'loss',pnl:-0.36,pair:'XAUUSD',note:'',date:1781869522000,hUTC:11},
+    {id:'p:XAUUSD.I:75896863',result:'loss',pnl:-2.28,pair:'XAUUSD',note:'',date:1781869576000,hUTC:11},
+    {id:'p:XAUUSD.I:75896893',result:'loss',pnl:-12.05,pair:'XAUUSD',note:'',date:1781869768000,hUTC:11},
+    {id:'p:USWTI:75897505',result:'loss',pnl:-7.33,pair:'USWTI',note:'',date:1781870336000,hUTC:11},
+    {id:'p:USWTI:75897651',result:'loss',pnl:-44.29,pair:'USWTI',note:'',date:1781881257000,hUTC:15},
+    {id:'p:BTCUSD:75972343',result:'win',pnl:1.85,pair:'BTCUSD',note:'',date:1781927038000,hUTC:3},
+    {id:'p:BTCUSD:75975823',result:'win',pnl:2.16,pair:'BTCUSD',note:'',date:1781953342000,hUTC:11},
+    {id:'p:BTCUSD:76009383',result:'loss',pnl:-5.74,pair:'BTCUSD',note:'',date:1782038059000,hUTC:10},
   ];
-  return {trades, withdrawals:[], deposits:[{amount:50,note:'Dépôt initial',date:1781481600000}, {amount:50,note:'16/06/2026 (Acompte Salaire)',date:1781638165242}], start:1781481600000};
+  return {trades, withdrawals:[], deposits:[{amount:50,note:'Dépôt initial',date:1781481600000}, {amount:50,note:'Acompte salaire (16/06)',date:1781638165242}, {amount:186.72,note:'Ajout perso (30/06)',date:1782000000000}, {amount:4.02,note:'Ajustement transferts internes',date:1782000001000}], start:1781481600000};
 }
 function getState(){const s=ld('th_fp_v4',null);return s||getDefaultState();}
 function saveState(s){sv('th_fp_v4',s);}
@@ -445,19 +471,24 @@ function renderWithdraw(){
   const totalWd=(s.withdrawals||[]).reduce((a,w)=>a+w.amount,0);
   const netProfit=cap-totalDep+totalWd;
   let status,title,amount=null,desc;
-  if(si+1<CFG.withdrawFromStep){
-    status='Phase de construction';title='Pas encore le moment';
-    desc=`Tu es à l'étape ${si+1}. Avant l'étape ${CFG.withdrawFromStep} (capital ${fmt(STEPS[CFG.withdrawFromStep-1],0)}), les montants sont petits — retirer ralentirait beaucoup ta croissance. On laisse composer. Premier retrait possible à l'étape ${CFG.withdrawFromStep}.`;
+  if(netProfit<=0){
+    status='Rien à retirer pour l\'instant';title='Pas encore de profit';
+    desc=`Ton trading n'a pas encore généré de gain (profit actuel : ${netProfit>=0?'+':''}${netProfit.toFixed(2)}€). Retirer maintenant reviendrait à reprendre l'argent que tu as toi-même déposé — ça n'a aucun intérêt. Le but est de retirer les <b>gains</b> du trading, jamais ton capital de départ. Reviens ici quand ton trading sera en profit.`;
+  }else if(si+1<CFG.withdrawFromStep){
+    status='Phase de construction';title='Laisse composer';
+    desc=`Tu as ${fmt(netProfit)} de profit, bien joué. Mais avant l'étape ${CFG.withdrawFromStep} (capital ${fmt(STEPS[CFG.withdrawFromStep-1],0)}), les montants sont petits — laisser ce profit composer accélère beaucoup ta croissance. Premier retrait conseillé à partir de l'étape ${CFG.withdrawFromStep}.`;
   }else{
-    const stepCap=STEPS[si],prevCap=STEPS[si-1],stepGain=stepCap-prevCap,available=stepGain*CFG.withdrawRate,surplus=cap-stepCap;
-    if(surplus<stepCap*0.15){status=`Étape ${si+1} en cours`;title='Bientôt disponible';amount=available;desc=`Tu viens d'atteindre l'étape ${si+1}. Une fois stabilisé au-dessus de ${fmt(stepCap,0)}, tu pourras retirer ~${fmt(available)} (20% du gain de l'étape). Le reste continue de composer.`;}
-    else{status=`Étape ${si+1} consolidée`;title='Tu peux te récompenser';amount=available;desc=`Tu es bien installé à l'étape ${si+1}. Tu peux retirer ~${fmt(available)} (20% du gain de l'étape) sans casser ta progression.`;}
+    // À partir de l'étape 4 : on peut retirer une partie du PROFIT (jamais le capital déposé)
+    const suggested=netProfit*CFG.withdrawRate;
+    amount=suggested;
+    status=`Étape ${si+1} · profit disponible`;title='Tu peux te récompenser';
+    desc=`Ton trading a généré ${fmt(netProfit)} de profit. Tu peux en retirer environ ${fmt(suggested)} (20%) pour te faire plaisir — le reste continue de travailler et de composer. Tu retires tes gains, jamais ton capital de départ.`;
   }
   let milestones='';
   for(let i=CFG.withdrawFromStep-1;i<STEPS.length;i++){
     const stepCap=STEPS[i],prevCap=STEPS[i-1],gain=stepCap-prevCap,wdAmount=gain*CFG.withdrawRate;
     const reached=cap>=stepCap,isNext=!reached&&curStep(cap)>=i-1;
-    milestones+=`<div class="wd-milestone"><div class="wd-ms-dot ${reached?'done':isNext?'next':'future'}">${reached?'✓':i+1}</div><div class="wd-ms-info"><div class="wd-ms-name">Étape ${i+1} · ${fmt(stepCap,0)}</div><div class="wd-ms-sub">${reached?'Retrait débloqué':'À atteindre'}</div></div><div class="wd-ms-amount">~${fmt(wdAmount,0)}</div></div>`;
+    milestones+=`<div class="wd-milestone"><div class="wd-ms-dot ${reached?'done':isNext?'next':'future'}">${reached?'✓':i+1}</div><div class="wd-ms-info"><div class="wd-ms-name">Étape ${i+1} · ${fmt(stepCap,0)}</div><div class="wd-ms-sub">${reached?'Palier atteint':'À atteindre'}</div></div><div class="wd-ms-amount">~${fmt(wdAmount,0)}</div></div>`;
   }
   document.getElementById('withdraw-body').innerHTML=`
   <div class="wd-hero">
@@ -470,7 +501,7 @@ function renderWithdraw(){
     <div class="sm"><div class="sm-lbl">Déposé</div><div class="sm-val" style="color:var(--blue)">${fmt(totalDep,0)}</div></div>
     <div class="sm"><div class="sm-lbl">Retiré</div><div class="sm-val" style="color:var(--green)">${fmt(totalWd,0)}</div></div>
   </div>
-  <div class="wd-next"><div class="wd-next-hdr">Paliers de retrait (20% du gain par étape)</div>${milestones}</div>
+  <div class="wd-next"><div class="wd-next-hdr">Repère : récompense indicative par étape (20% du gain), à prendre sur tes profits réels</div>${milestones}</div>
   <div class="fsec">Enregistrer un retrait</div>
   <div class="fcard">
     <label>Montant retiré (€)</label>
@@ -495,21 +526,21 @@ function renderGoals(){
   const netProfit=cap-totalDep+totalWd;
 
   const cards=GOALS.map(g=>{
-    // Seuil de retrait sécurisé : capital permettant de retirer l'objectif SANS repasser sous le palier actuel
-    const seuilSecu=STEPS[si]+g.target;
-    // Progression vers ce seuil (en partant du palier actuel)
-    const base=STEPS[si];
-    const pct=Math.min(100,Math.max(0,((cap-base)/(seuilSecu-base))*100));
-    const resteAvantSecu=Math.max(0,seuilSecu-cap);
-    const pretSecu=cap>=seuilSecu;            // on peut retirer en restant à l'étape
+    // Les objectifs se financent avec le PROFIT du trading, pas avec l'argent déposé.
+    const pct=Math.min(100,Math.max(0,(netProfit/g.target)*100));
+    const reste=g.target-netProfit;        // ce qu'il reste à générer en profit
+    const atteint=netProfit>=g.target;
 
     let statusLine,statusColor,barColor,badge;
-    if(pretSecu){
+    if(atteint){
       barColor='var(--green)';statusColor='var(--green)';badge=' ✓';
-      statusLine=`✓ C'est le moment ! Tu peux retirer ${fmt(g.target)} et rester confortablement à l'étape ${si+1}. Capital après retrait : ~${fmt(cap-g.target,0)}.`;
+      statusLine=`✓ Atteint ! Ton trading a généré ${fmt(netProfit)} de profit, assez pour t'offrir ça. Si tu retires, ton capital de trading baissera d'autant — à toi de voir.`;
+    }else if(netProfit<0){
+      barColor='var(--red)';statusColor='var(--text2)';badge='';
+      statusLine=`Ton trading est en perte de ${fmt(Math.abs(netProfit))} pour l'instant. Il faut d'abord revenir à l'équilibre, puis générer ${fmt(g.target)} de profit pour t'offrir ça.`;
     }else{
       barColor='var(--gold)';statusColor='var(--text2)';badge='';
-      statusLine=`Encore ${fmt(resteAvantSecu)} de capital pour pouvoir retirer ${fmt(g.target)} en toute sécurité (cible ~${fmt(seuilSecu,0)}).`;
+      statusLine=`Encore ${fmt(reste)} de profit de trading à générer pour t'offrir ça.`;
     }
 
     return `
@@ -532,7 +563,7 @@ function renderGoals(){
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:10px">
         <span style="font-family:var(--mono);font-weight:700;color:${barColor}">${pct.toFixed(0)}%${badge}</span>
-        <span style="color:var(--text2)">cible retrait ~${fmt(seuilSecu,0)}</span>
+        <span style="color:var(--text2)">${fmt(Math.max(0,Math.min(netProfit,g.target)))} / ${fmt(g.target)} profit</span>
       </div>
       <div style="font-size:12px;line-height:1.4;color:${statusColor};padding:10px 12px;background:var(--bg2);border-radius:var(--rs)">${statusLine}</div>
     </div>`;
@@ -541,7 +572,8 @@ function renderGoals(){
   document.getElementById('goals-body').innerHTML=`
   <div class="fsec">Mes objectifs</div>
   <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:14px">
-    Profit net disponible : <b style="color:${netProfit>=0?'var(--green)':'var(--red)'}">${netProfit>=0?'+':''}${netProfit.toFixed(2)}€</b> · Capital actuel : <b>${fmt(cap)}</b>
+    Profit de trading généré : <b style="color:${netProfit>=0?'var(--green)':'var(--red)'}">${netProfit>=0?'+':''}${netProfit.toFixed(2)}€</b><br>
+    <span style="font-size:11px;color:var(--text3)">Les objectifs se financent avec ce que ton trading <b>rapporte</b>, pas avec l'argent que tu déposes. Déposer 400€ ne fait pas avancer un objectif — seuls tes gains comptent.</span>
   </div>
   ${cards}
   <div class="fcard" style="border-color:rgba(91,141,238,0.2)">
